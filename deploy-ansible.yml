@@ -1,0 +1,28 @@
+---
+- name: deploy ansible web page on port 8080
+  hosts: ansible-vm-1, ansible-vm-2
+  remote_user: ec2-user
+  become: true
+  tasks:
+    - name: install httpd
+      yum:
+          name: httpd
+          state: latest
+
+    - name: configure httpd to listen on port 8080
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^Listen 80'
+        line: 'Listen 8080'
+        state: present
+
+    - name: run httpd
+      service:
+              name: httpd
+              state: started
+              enabled: true
+
+    - name: create index.htl on port 8080
+      copy:
+        content: "Hello World from {{ vm_name }}"
+        dest: /var/www/html/index.html

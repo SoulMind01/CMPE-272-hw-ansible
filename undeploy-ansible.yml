@@ -1,0 +1,15 @@
+---
+- name: undo the ansible web page deployment on port 8080
+  hosts: ansible-vm-1, ansible-vm-2  
+  remote_user: ec2-user
+  become: true
+  tasks:
+    - name: uninstall httpd
+      yum:
+          name: httpd
+          state: absent
+
+    - name: remove index.html from /var/www/html/
+      file:
+        path: /var/www/html/index.html
+        state: absent
